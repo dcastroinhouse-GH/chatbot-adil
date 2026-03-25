@@ -85,7 +85,12 @@ def answer_question(qa_chain, question: str) -> dict:
         source = doc.metadata.get("source", "Documento desconocido")
         page = doc.metadata.get("page", 0) + 1  # 0-indexed a 1-indexed
         filename = os.path.basename(source)
-        sources.add(f"{filename} (Pág. {page})")
+        
+        if filename != "Documento desconocido":
+            url = f"https://adilmexico.com/pdf-adil/{filename}"
+            sources.add(f"[{filename} (Pág. {page})]({url})")
+        else:
+            sources.add(f"{filename} (Pág. {page})")
         
     return {
         "answer": result.get("answer", ""),
