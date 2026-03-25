@@ -11,10 +11,16 @@ load_dotenv()
 # Configuración de la página (ideal para iframes: sin sidebar, layout wide)
 st.set_page_config(
     page_title="Asistente Corporativo",
-    page_icon="💬",
+    page_icon="logo.png" if os.path.exists("logo.png") else "💬",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# Definir función para el avatar
+def get_avatar(role):
+    if role == "assistant":
+        return "logo.png" if os.path.exists("logo.png") else "🤖"
+    return "👤"
 
 # Ocultar menú de Streamlit y barra de pie de página para que luzca mejor incrustado
 hide_streamlit_style = """
@@ -76,7 +82,7 @@ st.title("Asistente Virtual")
 
 # Mostrar historial de mensajes
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
+    with st.chat_message(message["role"], avatar=get_avatar(message["role"])):
         st.markdown(message["content"])
 
 # Capturar input del usuario
@@ -85,11 +91,11 @@ if prompt := st.chat_input("Escribe tu pregunta aquí..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
     # Mostrar mensaje de usuario
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar=get_avatar("user")):
         st.markdown(prompt)
 
     # Generar respuesta del asistente
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar=get_avatar("assistant")):
         with st.spinner("Buscando en los documentos..."):
             result = answer_question(qa_chain, prompt)
             respuesta = result["answer"]
