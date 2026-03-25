@@ -20,6 +20,9 @@ def initialize_vector_db(pdf_dir: str = "docs") -> FAISS:
         
     pdf_files = glob.glob(os.path.join(pdf_dir, "*.pdf"))
     
+    # PARA PRUEBAS: Usar solo el primer PDF para acelerar enormemente la carga inicial
+    pdf_files = pdf_files[:1]
+    
     for filepath in pdf_files:
         print(f"Procesando localmente: {filepath}")
         loader = PyPDFLoader(filepath)
@@ -35,8 +38,11 @@ def initialize_vector_db(pdf_dir: str = "docs") -> FAISS:
     )
     chunks = text_splitter.split_documents(documents)
     
-    # Usar el modelo actual de embeddings de Google Gemini
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+    # Usar el modelo actual de embeddings de Google Gemini especificando el task_type
+    embeddings = GoogleGenerativeAIEmbeddings(
+        model="models/text-embedding-004",
+        task_type="retrieval_document"
+    )
     
     # Crear el VectorStore
     vector_store = FAISS.from_documents(chunks, embeddings)
