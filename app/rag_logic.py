@@ -3,11 +3,11 @@ import tempfile
 import requests
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate
+
+# ...
 
 import glob
 
@@ -38,11 +38,8 @@ def initialize_vector_db(pdf_dir: str = "docs") -> FAISS:
     )
     chunks = text_splitter.split_documents(documents)
     
-    # Usar el modelo actual de embeddings de Google Gemini especificando el task_type
-    embeddings = GoogleGenerativeAIEmbeddings(
-        model="text-embedding-004",
-        task_type="retrieval_document"
-    )
+    # Usamos embeddings locales ultra-ligeros (ONNX) para evitar errores con las API externas
+    embeddings = FastEmbedEmbeddings()
     
     # Crear el VectorStore
     vector_store = FAISS.from_documents(chunks, embeddings)
