@@ -40,7 +40,7 @@ def initialize_vector_db(pdf_dir: str = "docs") -> FAISS:
     
     # Usar el modelo actual de embeddings de Google Gemini especificando el task_type
     embeddings = GoogleGenerativeAIEmbeddings(
-        model="models/text-embedding-004",
+        model="text-embedding-004",
         task_type="retrieval_document"
     )
     
