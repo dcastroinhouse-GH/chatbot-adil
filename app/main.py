@@ -34,7 +34,15 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # El bot leerá los PDFs que pongas en la carpeta 'docs' que está en la raíz del proyecto.
 
 WELCOME_MESSAGE = """Hola, soy el asistente de ADIL México.
-Estoy aquí para ayudarte a encontrar información contenida en nuestros documentos y materiales internos.
+Estoy aquí para responder a tus preguntas basándome **exclusivamente** en nuestros catálogos y documentos oficiales:
+
+- [Catálogo de Contenidos](https://adilmexico.com/pdf-adil/ADIL-CatalogoContenidos.pdf)
+- [Catálogo de Contenidos 25 NPc DVIH Salud Mental](https://adilmexico.com/pdf-adil/ADIL-CatalogoContenidos25NPcDVIHSaludMental.pdf)
+- [Catálogo Generalidades DEI](https://adilmexico.com/pdf-adil/ADIL-CatalogoGeneralidadesDEI.pdf)
+- [Catálogo Generalidades DEI Presupuesto](https://adilmexico.com/pdf-adil/ADIL-CatalogoGeneralidadesDEIPresupuesto.pdf)
+- [Catálogo de Género](https://adilmexico.com/pdf-adil/ADIL-CatalogoGenero.pdf)
+- [Catálogo Rumbo Al Orgullo](https://adilmexico.com/pdf-adil/ADIL-CatalogoRumboAlOrgullo.pdf)
+- [Conferencias Magistrales](https://adilmexico.com/pdf-adil/ADIL-ConferenciasMagistrales.pdf)
 
 Escríbeme tu duda de forma concreta (por ejemplo: '¿Qué talleres ofrecen para empresas grandes?' o 'Resume los beneficios del programa X') y te responderé usando solo la información disponible en esos documentos."""
 
@@ -87,12 +95,10 @@ if prompt := st.chat_input("Escribe tu pregunta aquí..."):
             respuesta = result["answer"]
             fuentes = result["sources"]
 
-            # Formatear fuentes opcionalmente
+            # Formatear fuentes
             respuesta_formateada = respuesta
-            """
-            if fuentes and respuesta != "No encuentro esa información en los documentos disponibles.":
-                respuesta_formateada += "\n\n---\n*Fuentes: " + ", ".join(fuentes) + "*"
-            """
+            if fuentes and "No encuentro esa información" not in respuesta:
+                respuesta_formateada += "\n\n---\n**Fuentes:** " + ", ".join(fuentes)
             st.markdown(respuesta_formateada)
             
     # Añadir respuesta al historial
