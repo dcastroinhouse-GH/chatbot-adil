@@ -38,27 +38,27 @@ Estoy aquí para ayudarte a encontrar información contenida en nuestros documen
 
 Escríbeme tu duda de forma concreta (por ejemplo: '¿Qué talleres ofrecen para empresas grandes?' o 'Resume los beneficios del programa X') y te responderé usando solo la información disponible en esos documentos."""
 
-def init_app():
-    """Inicializa la cadena QA y la guarda en la sesión."""
-    if "qa_chain" not in st.session_state:
-        if not os.getenv("GOOGLE_API_KEY"):
-            st.error("⚠️ La clave GOOGLE_API_KEY no está configurada. Revisa el archivo .env")
-            st.stop()
-            
-        with st.spinner("Inicializando la base de conocimientos con los PDFs locales... (esto puede tomar unos segundos)"):
-            try:
-                vector_db = initialize_vector_db("docs")
-                st.session_state.qa_chain = get_qa_chain(vector_db)
-            except Exception as e:
-                st.error(f"Error cargando documentos: {e}")
-                st.stop()
+@st.cache_resource(show_spinner=False)
+def load_qa_chain_globally():
+    """Inicializa la cadena QA una sola vez y la guarda en caché global para todos los usuarios."""
+    if not os.getenv("GOOGLE_API_KEY"):
+        st.error("⚠️ La clave GOOGLE_API_KEY no está configurada. Revisa el archivo .env")
+        st.stop()
+        
+    try:
+        vector_db = initialize_vector_db("docs")
+        return get_qa_chain(vector_db)
+    except Exception as e:
+        st.error(f"Error cargando documentos: {e}")
+        st.stop()
 
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
-            {"role": "assistant", "content": WELCOME_MESSAGE}
-        ]
+with st.spinner("Cargando la base de datos (esto solo toma unos segundos extra la primerísima vez)..."):
+    qa_chain = load_qa_chain_globally()
 
-init_app()
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {"role": "assistant", "content": WELCOME_MESSAGE}
+    ]
 
 # Título de la interfaz
 st.title("Asistente Virtual")
@@ -80,7 +80,7 @@ if prompt := st.chat_input("Escribe tu pregunta aquí..."):
     # Generar respuesta del asistente
     with st.chat_message("assistant"):
         with st.spinner("Buscando en los documentos..."):
-            result = answer_question(st.session_state.qa_chain, prompt)
+            result = answer_question(qa_chain, prompt)
             respuesta = result["answer"]
             fuentes = result["sources"]
 
