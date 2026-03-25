@@ -35,8 +35,8 @@ def initialize_vector_db(pdf_dir: str = "docs") -> FAISS:
     )
     chunks = text_splitter.split_documents(documents)
     
-    # Usar el modelo de embeddings de Google Gemini
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    # Usar el modelo actual de embeddings de Google Gemini
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
     
     # Crear el VectorStore
     vector_store = FAISS.from_documents(chunks, embeddings)
