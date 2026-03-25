@@ -12,7 +12,10 @@ from langchain_core.prompts import ChatPromptTemplate
 def download_pdf(url: str, temp_dir: str) -> str:
     """Descarga un PDF desde una URL a un archivo temporal local."""
     try:
-        response = requests.get(url, stream=True)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+        }
+        response = requests.get(url, stream=True, headers=headers)
         response.raise_for_status()
         filename = url.split("/")[-1] or "documento.pdf"
         filepath = os.path.join(temp_dir, filename)
