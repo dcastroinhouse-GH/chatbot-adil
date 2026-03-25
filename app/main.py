@@ -42,7 +42,10 @@ Escríbeme tu duda de forma concreta (por ejemplo: '¿Qué talleres ofrecen para
 def load_qa_chain_globally():
     """Inicializa la cadena QA una sola vez y la guarda en caché global para todos los usuarios."""
     if not os.getenv("GOOGLE_API_KEY"):
-        st.error("⚠️ La clave GOOGLE_API_KEY no está configurada. Revisa el archivo .env")
+        st.error("⚠️ La clave GOOGLE_API_KEY no está configurada. Revisa el archivo .env o Render variables.")
+        st.stop()
+    if not os.getenv("HUGGINGFACEHUB_API_TOKEN"):
+        st.error("⚠️ La clave HUGGINGFACEHUB_API_TOKEN no está configurada en Render.")
         st.stop()
         
     try:

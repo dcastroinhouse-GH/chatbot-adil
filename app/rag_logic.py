@@ -4,7 +4,7 @@ import requests
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -39,8 +39,8 @@ def initialize_vector_db(pdf_dir: str = "docs") -> FAISS:
     )
     chunks = text_splitter.split_documents(documents)
     
-    # Usamos embeddings locales ultra-ligeros (ONNX) para evitar errores con las API externas
-    embeddings = FastEmbedEmbeddings()
+    # Usar HuggingFace Inference API (100% Gratis y no consume RAM del servidor)
+    embeddings = HuggingFaceEndpointEmbeddings(model="sentence-transformers/all-MiniLM-L6-v2")
     
     # Crear el VectorStore
     vector_store = FAISS.from_documents(chunks, embeddings)
