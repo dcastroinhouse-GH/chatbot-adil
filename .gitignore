@@ -1,0 +1,12 @@
+# Entornos virtuales
+venv/
+env/
+.venv/
+
+# Variables de entorno (¡MUY IMPORTANTE PARA QUE NO SE FILTRE TU CLAVE!)
+.env
+
+# Archivos propios de Mac y Python
+.DS_Store
+__pycache__/
+*.pyc
