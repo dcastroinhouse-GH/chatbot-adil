@@ -31,16 +31,7 @@ header {visibility: hidden;}
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-# Lista de PDFs de ejemplo
-PDF_URLS = [
-    "https://adilmexico.com/pdf-adil/ADIL-CatalogoContenidos.pdf",
-    "https://adilmexico.com/pdf-adil/ADIL-CatalogoGenero.pdf",
-    "https://adilmexico.com/pdf-adil/ADIL-CatalogoRumboAlOrgullo.pdf",
-    "https://adilmexico.com/pdf-adil/ADIL-CatalogoContenidos25NPcDVIHSaludMental.pdf",
-    "https://adilmexico.com/pdf-adil/ADIL-ConferenciasMagistrales.pdf",
-    "https://adilmexico.com/pdf-adil/ADIL-CatalogoGeneralidadesDEI.pdf",
-    "https://adilmexico.com/pdf-adil/ADIL-CatalogoGeneralidadesDEIPresupuesto.pdf"
-]
+# El bot leerá los PDFs que pongas en la carpeta 'docs' que está en la raíz del proyecto.
 
 WELCOME_MESSAGE = """Hola, soy el asistente de ADIL México.
 Estoy aquí para ayudarte a encontrar información contenida en nuestros documentos y materiales internos.
@@ -54,9 +45,9 @@ def init_app():
             st.error("⚠️ La clave GOOGLE_API_KEY no está configurada. Revisa el archivo .env")
             st.stop()
             
-        with st.spinner("Inicializando la base de conocimientos con los PDFs proporcionados... (esto puede tomar unos segundos)"):
+        with st.spinner("Inicializando la base de conocimientos con los PDFs locales... (esto puede tomar unos segundos)"):
             try:
-                vector_db = initialize_vector_db(PDF_URLS)
+                vector_db = initialize_vector_db("docs")
                 st.session_state.qa_chain = get_qa_chain(vector_db)
             except Exception as e:
                 st.error(f"Error cargando documentos: {e}")

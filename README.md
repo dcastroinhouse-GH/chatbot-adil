@@ -33,15 +33,7 @@ GOOGLE_API_KEY=AIzaSy...tu_apikey_secreta
 ```
 
 ### 5. Añadir TUS documentos PDF
-Abre el archivo `app/main.py` y busca y modifica la variable `PDF_URLS`. Añade las URL exactas de los documentos alojados en tu dominio:
-
-```python
-PDF_URLS = [
-    "https://tusitio.com/docs/manual-corporativo.pdf",
-    "https://tusitio.com/docs/servicios-2026.pdf"
-]
-```
-*(Durante el desarrollo puedes dejar la url de prueba que viene por defecto y reemplazarla después).*
+Copia tus archivos `.pdf` directamente dentro de la carpeta `docs` que está en el directorio principal del proyecto. El bot leerá todos los PDFs que se encuentren ahí, en lugar de intentar descargarlos de internet cada vez que arranque (lo cual bloquea frecuentemente los servidores como HostGator).
 
 ### 6. Ejecutar la App en Local
 Ejecuta el siguiente comando desde la raíz del proyecto para iniciar la interfaz de Streamlit:

@@ -9,39 +9,24 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
-def download_pdf(url: str, temp_dir: str) -> str:
-    """Descarga un PDF desde una URL a un archivo temporal local."""
-    try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
-        }
-        response = requests.get(url, stream=True, headers=headers)
-        response.raise_for_status()
-        filename = url.split("/")[-1] or "documento.pdf"
-        filepath = os.path.join(temp_dir, filename)
-        with open(filepath, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:
-                    f.write(chunk)
-        return filepath
-    except Exception as e:
-        print(f"Error descargando {url}: {e}")
-        return None
+import glob
 
-def initialize_vector_db(pdf_urls: list[str]) -> FAISS:
-    """Descarga PDFs, los divide en fragmentos y crea un índice vectorial FAISS."""
+def initialize_vector_db(pdf_dir: str = "docs") -> FAISS:
+    """Lee PDFs de una carpeta local, los divide en fragmentos y crea un índice vectorial FAISS."""
     documents = []
     
-    with tempfile.TemporaryDirectory() as temp_dir:
-        for url in pdf_urls:
-            filepath = download_pdf(url, temp_dir)
-            if filepath:
-                print(f"Procesando: {filepath}")
-                loader = PyPDFLoader(filepath)
-                documents.extend(loader.load())
+    if not os.path.exists(pdf_dir):
+        os.makedirs(pdf_dir)
+        
+    pdf_files = glob.glob(os.path.join(pdf_dir, "*.pdf"))
+    
+    for filepath in pdf_files:
+        print(f"Procesando localmente: {filepath}")
+        loader = PyPDFLoader(filepath)
+        documents.extend(loader.load())
     
     if not documents:
-        raise ValueError("No se pudo cargar ningún documento desde las URLs proporcionadas.")
+        raise ValueError("No hay PDFs en la carpeta 'docs'. Sube tus archivos .pdf allí antes de desplegar.")
     
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
